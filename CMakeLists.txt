@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project(miracl)
 
-add_library(miracl STATIC "")
-
 # for x64 bit only at the moment
 # cp mirdef.h64 mirdef.h
 # cp mrmuldv.g64 mrmuldv.c
 
+add_library(miracl STATIC "")
 target_sources(miracl PRIVATE
   "${CMAKE_CURRENT_LIST_DIR}/source/mrcore.c"
   "${CMAKE_CURRENT_LIST_DIR}/source/mrarth0.c"
@@ -60,13 +59,44 @@ target_sources(miracl PRIVATE
   "${CMAKE_CURRENT_LIST_DIR}/source/mrflsh4.c"
   "${CMAKE_CURRENT_LIST_DIR}/source/mrmuldv.c"
   )
+
 include_directories("${CMAKE_CURRENT_LIST_DIR}/include/")
 
+add_library(miracl_pairing STATIC
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/bls_pair"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/ecn2.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/ecn3.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/ecn4.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/ecn6.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/ecn8.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn12a.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn12b.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn12.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn18.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn24.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn2.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn36.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn3.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn4.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn6a.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn6.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/zzn8.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/gf2m12x.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/gf2m4x.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/gf2m6x.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/source/gf2m.cpp"
+  )
+
 add_library(big STATIC "${CMAKE_CURRENT_LIST_DIR}/source/big.cpp")
+
 add_library(zzn STATIC "${CMAKE_CURRENT_LIST_DIR}/source/zzn.cpp")
+
 add_library(ec2 STATIC "${CMAKE_CURRENT_LIST_DIR}/source/ec2.cpp")
+
 add_library(crt STATIC "${CMAKE_CURRENT_LIST_DIR}/source/crt.cpp")
+
 add_library(ecn STATIC "${CMAKE_CURRENT_LIST_DIR}/source/ecn.cpp")
+
 add_library(flash STATIC "${CMAKE_CURRENT_LIST_DIR}/source/flash.cpp")
 add_library(polymod STATIC "${CMAKE_CURRENT_LIST_DIR}/source/curve/polymod.cpp")
 add_library(poly STATIC "${CMAKE_CURRENT_LIST_DIR}/source/curve/poly.cpp")
@@ -100,3 +130,12 @@ target_link_libraries(pk-demo ecn big miracl)
 
 add_executable(schoof "${CMAKE_CURRENT_LIST_DIR}/source/curve/schoof.cpp")
 target_link_libraries(schoof polymod poly ecn crt zzn big miracl)
+
+add_executable(ake "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/ake.cpp")
+target_link_libraries(ake miracl_pairing zzn ecn big miracl)
+
+add_executable(dl "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/dl.cpp")
+target_link_libraries(dl miracl_pairing zzn ecn ec2 big miracl)
+
+add_executable(fuzzy "${CMAKE_CURRENT_LIST_DIR}/source/curve/pairing/dl.cpp")
+target_link_libraries(fuzzy miracl_pairing zzn ecn ec2 big miracl)
